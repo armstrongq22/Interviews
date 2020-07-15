@@ -1,0 +1,62 @@
+##946. Validate Stack Sequences
+
+# Initial Approach
+'''html
+My first approach was to iterate through the popped array and check if the element had already been pushed,
+if it had then I will simply compare the top of the stack to the popped array element. However, if it has not been pushed,
+then I simply iterate through the pushed array until I add the element and then I pop it off the stack.
+'''
+
+'''java
+class Solution {
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        Stack<Integer> stk = new Stack<>();
+        
+        int pushIdx = 0;
+        for(int i = 0; i < popped.length; i++) {
+            if(stk.contains(popped[i])) {
+                if(stk.pop() != popped[i]) return false; 
+            }
+            else {
+                while(pushIdx < pushed.length && !stk.contains(popped[i])) {
+                    stk.push(pushed[pushIdx]);
+                    pushIdx++;
+                }
+                stk.pop();
+            }
+        }
+        return true;
+    }
+}
+'''
+
+# Approach 2
+'''html
+After going back over my initial solution I realized that I had some bottlenecks that were slowing my solution down.
+If I could think of a way to eliminate .contains() then my solution could reach faster time complexities.
+'''
+
+'''java
+class Solution {
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        Stack<Integer> stk = new Stack<>();
+        int idx = 0;
+        
+        for(int x : pushed) {
+            stk.push(x);
+            while(!stk.empty() && stk.peek() == popped[idx]) {
+                stk.pop();
+                idx++;
+            }
+        }
+        
+        return stk.empty();
+    }
+}
+'''
+
+'''html
+This solution simply pushes all of the element in the pushed array, and if at anytime it encounters the next element to be popped then it will pop it from the stack.
+The time complexity will be linear O(n) because worst case it iterates through pushed and popped once. The space complexity will also be linear O(n) due its worst case
+of storing every element in the pushed array.
+'''
